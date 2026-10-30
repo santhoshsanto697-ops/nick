@@ -9,10 +9,10 @@ void main() {
 // ================= GLASS WAVE COLORS =================
 
 const Color navy = Color(0xFF061632);
-const Color deepBlue = Color.fromARGB(255, 129, 142, 214);
-const Color blue = Color.fromARGB(255, 168, 196, 103);
+const Color deepBlue = Color(0xFF0B2D63);
+const Color blue = Color(0xFF1769E8);
 const Color cyan = Color(0xFF00E5FF);
-const Color violet = Color.fromARGB(255, 19, 15, 26);
+const Color violet = Color(0xFF7C3AED);
 const Color lavender = Color(0xFFB9C8FF);
 const Color lineWhite = Color(0x55B9D9FF);
 
@@ -444,58 +444,45 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.all(18),
                       child: Column(
                         children: [
-                          gradientButton(
-                            text: 'Continue with Google',
-                            icon: Icons.g_mobiledata_rounded,
-                            onPressed: () {
-                              showAppMessage(
-                                context,
-                                'Google sign-in needs authentication setup.',
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 13),
                           TextField(
-                            controller: phoneController,
-                            keyboardType: TextInputType.phone,
-                            maxLength: 15,
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.email_outlined),
                               labelText: 'Gmail address',
                               hintText: 'Enter your Gmail address',
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          gradientButton(
-                            text: 'Continue with phone number',
-                            icon: Icons.arrow_forward_rounded,
-                            onPressed: continueWithPhone,
-                          ),
-                          const SizedBox(height: 13),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 54,
-                            child: OutlinedButton.icon(
-                              onPressed: () {
-                                showAppMessage(
-                                  context,
-                                  'Facebook sign-in needs authentication setup.',
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.facebook,
-                                color: Color(0xFF6CA8FF),
-                                size: 27,
-                              ),
-                              label: const Text('Continue with Facebook'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                side: const BorderSide(color: lineWhite),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: passwordController,
+                            obscureText: obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) => signIn(),
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              labelText: 'Password',
+                              hintText: 'Enter your password',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    obscurePassword = !obscurePassword;
+                                  });
+                                },
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 22),
+                          gradientButton(
+                            text: 'Sign In',
+                            icon: Icons.login_rounded,
+                            onPressed: signIn,
                           ),
                         ],
                       ),
@@ -522,7 +509,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-        
+
+// ================= HOME PAGE =================
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -573,26 +561,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        centerTitle: false, 
-        title: const Row(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            LXLogo(size: 32, withGlow: false),
-            SizedBox(width: 9),
-            Text('LOOPIX'),
+            const LXLogo(size: 32, withGlow: false),
+            const SizedBox(width: 9),
+            const Text('LOOPIX'),
           ],
         ),
         actions: [
-          // Profile button placed to the left of the search icon
-          IconButton(
-            icon: const Icon(Icons.account_circle_rounded),
-            tooltip: 'Profile',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfilePage()),
-              );
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.search_rounded),
             onPressed: () {
@@ -601,7 +578,12 @@ class _HomePageState extends State<HomePage> {
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
-              if (value == 'settings') {
+              if (value == 'profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfilePage()),
+                );
+              } else if (value == 'settings') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const SettingsPage()),
@@ -615,6 +597,7 @@ class _HomePageState extends State<HomePage> {
               }
             },
             itemBuilder: (_) => const [
+              PopupMenuItem(value: 'profile', child: Text('Profile')),
               PopupMenuItem(value: 'settings', child: Text('Settings')),
               PopupMenuItem(value: 'logout', child: Text('Log out')),
             ],
@@ -781,8 +764,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
 
 // ================= BOTTOM NAVIGATION =================
 
@@ -1163,8 +1144,7 @@ class GamesPage extends StatelessWidget {
       children: [
         const Text(
           'LOOPIX Games',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900
-          ),
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -1448,7 +1428,7 @@ class _QuickQuizPageState extends State<QuickQuizPage> {
   }
 
   void nextQuestion() {
-    setState(() {        
+    setState(() {
       current++;
       answered = false;
     });
@@ -1524,37 +1504,23 @@ class _QuickQuizPageState extends State<QuickQuizPage> {
                       child: Text(option),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-                  for (final option
-                      in questions[current]['options'] as List<String>)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: ElevatedButton(
-                        onPressed: () => chooseAnswer(option),
-                        child: Text(option),
-                      ),
-                    ),
-                  if (answered) ...[
-                    const SizedBox(height: 10),
-                    Text(
-                      questions[current]['answer'] == null
-                          ? ''
-                          : 'Correct answer: ${questions[current]['answer']}',
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      onPressed: nextQuestion,
-                      child: Text(
-                        current == questions.length - 1
-                            ? 'Show Result'
-                            : 'Next Question',
-                      ),
-                    ),
-                  ],
-                ]
-              ),
-      );
+                if (answered) ...[
+                  Text(
+                    'Correct answer: ${questions[current]['answer']}',
+                    style: const TextStyle(color: cyan),
+                  ),
+                  const SizedBox(height: 18),
+                  gradientButton(
+                    text: current == questions.length - 1
+                        ? 'Show Result'
+                        : 'Next Question',
+                    icon: Icons.arrow_forward_rounded,
+                    onPressed: nextQuestion,
+                  ),
+                ],
+              ],
+            ),
+    );
   }
 }
 
@@ -1841,10 +1807,4 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
-}
-// COMMON MESSAGE
-void buildAppmessage(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message)),
-  );
 }
