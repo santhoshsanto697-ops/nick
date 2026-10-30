@@ -560,50 +560,75 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const LXLogo(size: 32, withGlow: false),
-            const SizedBox(width: 9),
-            const Text('LOOPIX'),
-          ],
+      
+appBar: AppBar(
+  centerTitle: false,
+  title: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const LXLogo(size: 38, withGlow: false),
+      const SizedBox(width: 10),
+      const Text(
+        'LOOPIX',
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.5,
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search_rounded),
-            onPressed: () {
-              showAppMessage(context, 'Search coming soon!');
-            },
-          ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'profile') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProfilePage()),
-                );
-              } else if (value == 'settings') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SettingsPage()),
-                );
-              } else if (value == 'logout') {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                  (route) => false,
-                );
-              }
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'profile', child: Text('Profile')),
-              PopupMenuItem(value: 'settings', child: Text('Settings')),
-              PopupMenuItem(value: 'logout', child: Text('Log out')),
-            ],
-          ),
-        ],
       ),
+    ],
+  ),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.search_rounded),
+      onPressed: () {
+        showAppMessage(context, 'Search coming soon!');
+      },
+    ),
+    PopupMenuButton<String>(
+      onSelected: (value) {
+        if (value == 'profile') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ProfilePage(),
+            ),
+          );
+        } else if (value == 'settings') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const SettingsPage(),
+            ),
+          );
+        } else if (value == 'logout') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginPage(),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 'profile',
+          child: Text('Profile'),
+        ),
+        PopupMenuItem(
+          value: 'settings',
+          child: Text('Settings'),
+        ),
+        PopupMenuItem(
+          value: 'logout',
+          child: Text('Log out'),
+        ),
+      ],
+    ),
+  ],
+),
+
       body: WaveBackground(
         showWaves: false,
         child: IndexedStack(index: selectedIndex, children: pages),
